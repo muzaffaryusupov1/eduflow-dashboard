@@ -40,6 +40,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sand-50 via-white to-sand-100">
+      test
       <div className="mx-auto flex min-h-screen max-w-5xl items-center gap-10 px-6">
         <div className="flex-1 space-y-6">
           <p className="text-xs uppercase tracking-[0.4em] text-ink-700">
