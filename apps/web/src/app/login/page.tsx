@@ -46,7 +46,7 @@ export default function LoginPage() {
             EduFlow
           </p>
           <h1 className="font-[var(--font-grotesk)] text-4xl font-semibold">
-            Run your education center with calm precision. test
+            Run your education center with calm precision.
           </h1>
           <p className="text-base text-ink-700">
             Sign in to manage classes, teachers, and billing in one unified
