@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
+  darkMode: 'class',
   content: ['./src/**/*.{ts,tsx}'],
   theme: {
     extend: {
@@ -8,7 +9,8 @@ const config: Config = {
         ink: {
           900: '#0b0f1a',
           800: '#141a2a',
-          700: '#1f2a3d'
+          700: '#1f2a3d',
+          600: '#2b3a52'
         },
         sand: {
           50: '#f7f4ef',
@@ -17,6 +19,10 @@ const config: Config = {
         accent: {
           500: '#f37b3c',
           600: '#e7682f'
+        },
+        slate: {
+          900: '#0f172a',
+          800: '#1e293b'
         }
       },
       boxShadow: {

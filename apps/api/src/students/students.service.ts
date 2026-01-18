@@ -79,4 +79,14 @@ export class StudentsService{
     }
     return student
   }
+
+  async deleteStudent(id: string){
+    const existing = await this.prisma.student.findUnique({ where: { id } })
+    if(!existing){
+      throw new NotFoundException('Student not found')
+    }
+
+    await this.prisma.student.delete({ where: { id } })
+    return { message: 'Student deleted successfully' }
+  }
 }

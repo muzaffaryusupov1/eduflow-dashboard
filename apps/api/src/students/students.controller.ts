@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { CreateStudentDto } from './dto/create.student.dto'
 import { GetStudentsDto } from './dto/get.students.dto'
@@ -28,5 +28,10 @@ export class StudentsController{
   @Get('students/:id')
   async getStudent(@Param('id') id: string){
     return await this.studentService.getStudent(id)
+  }
+
+  @Delete('students/:id')
+  async deleteStudent(@Param('id') id: string){
+    return await this.studentService.deleteStudent(id)
   }
 }
