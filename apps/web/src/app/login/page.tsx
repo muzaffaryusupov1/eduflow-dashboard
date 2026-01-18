@@ -40,13 +40,14 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sand-50 via-white to-sand-100">
+      test
       <div className="mx-auto flex min-h-screen max-w-5xl items-center gap-10 px-6">
         <div className="flex-1 space-y-6">
           <p className="text-xs uppercase tracking-[0.4em] text-ink-700">
             EduFlow
           </p>
           <h1 className="font-[var(--font-grotesk)] text-4xl font-semibold">
-            Run your education center with calm precision. test
+            Run your education center with calm precision.
           </h1>
           <p className="text-base text-ink-700">
             Sign in to manage classes, teachers, and billing in one unified

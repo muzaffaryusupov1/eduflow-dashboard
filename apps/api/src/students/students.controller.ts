@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { CreateStudentDto } from './dto/create.student.dto'
+import { GetStudentsDto } from './dto/get.students.dto'
+import { UpdateStudentDto } from './dto/update.student.dto'
 import { StudentsService } from './students.service'
 
 @ApiTags('students')
@@ -9,19 +11,22 @@ export class StudentsController{
   constructor(private readonly studentService: StudentsService){}
 
   @Get('students')
-  getStudents(){
-    return {
-      "data": [],
-      "": {
-        "total": 0,
-        "page": 1,
-        "limit": 10
-      }
-    }
+  getStudents(@Query() query: GetStudentsDto){
+    return this.studentService.getStudents(query)
   }
 
   @Post('students')
   async createStudent(@Body() dto:CreateStudentDto ){
     return await this.studentService.createStudent(dto)
+  }
+
+  @Patch('students/:id')
+  async updateStudent(@Param('id') id: string, @Body() dto: UpdateStudentDto){
+    return await this.studentService.updateStudent(id, dto)
+  }
+
+  @Get('students/:id')
+  async getStudent(@Param('id') id: string){
+    return await this.studentService.getStudent(id)
   }
 }
