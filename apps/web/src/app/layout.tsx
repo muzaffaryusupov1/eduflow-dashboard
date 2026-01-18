@@ -1,21 +1,14 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Sans, Space_Grotesk } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { QueryProvider } from '@/components/query-provider';
 import { AuthProvider } from '@/components/auth-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { ToastProvider } from '@/components/ui/use-toast';
 
-const grotesk = Space_Grotesk({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-grotesk'
-});
-
-const plex = IBM_Plex_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-plex'
+  variable: '--font-sans'
 });
 
 export const metadata: Metadata = {
@@ -29,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${grotesk.variable} ${plex.variable}`}>
-      <body className="font-[var(--font-plex)]">
+    <html lang="en" className={inter.variable}>
+      <body className="font-sans">
         <QueryProvider>
           <AuthProvider>
             <ToastProvider>

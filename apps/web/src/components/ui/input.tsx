@@ -10,11 +10,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, label, ...props }, ref) => {
     return (
       <label className="space-y-2 text-sm">
-        {label && <span className="text-ink-700">{label}</span>}
+        {label && <span className="text-muted-foreground">{label}</span>}
         <input
           type={type}
           className={cn(
-            'flex h-11 w-full rounded-xl border border-ink-900/15 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition placeholder:text-ink-700/60 focus:border-ink-900 focus:ring-2 focus:ring-ink-900/15',
+            'flex h-11 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/30',
             className
           )}
           ref={ref}

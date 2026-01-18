@@ -1,13 +1,13 @@
 'use client';
 
-import { useAuth } from '@/components/auth-provider'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useToast } from '@/components/ui/use-toast'
-import { apiLogin } from '@/lib/api-client'
-import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useAuth } from '@/components/auth-provider';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import { apiLogin } from '@/lib/api-client';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,27 +39,26 @@ export default function LoginPage() {
   }, [isAuthenticated, router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sand-50 via-white to-sand-100">
-      test
+    <div className="min-h-screen bg-muted/30">
       <div className="mx-auto flex min-h-screen max-w-5xl items-center gap-10 px-6">
         <div className="flex-1 space-y-6">
-          <p className="text-xs uppercase tracking-[0.4em] text-ink-700">
+          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">
             EduFlow
           </p>
-          <h1 className="font-[var(--font-grotesk)] text-4xl font-semibold">
+          <h1 className="text-4xl font-semibold tracking-tight">
             Run your education center with calm precision.
           </h1>
-          <p className="text-base text-ink-700">
+          <p className="text-base text-muted-foreground">
             Sign in to manage classes, teachers, and billing in one unified
             workspace.
           </p>
         </div>
-        <div className="w-full max-w-sm rounded-3xl border border-ink-900/10 bg-white p-8 shadow-card">
+        <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-sm">
           <div className="space-y-2">
-            <h2 className="font-[var(--font-grotesk)] text-2xl font-semibold">
+            <h2 className="text-2xl font-semibold tracking-tight">
               Sign in
             </h2>
-            <p className="text-sm text-ink-700">
+            <p className="text-sm text-muted-foreground">
               Use your owner or admin credentials.
             </p>
           </div>

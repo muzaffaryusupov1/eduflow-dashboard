@@ -2,13 +2,25 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { LayoutDashboard, Users, GraduationCap, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { navItems } from '@/lib/roles';
 import { useAuth } from './auth-provider';
 import { cn } from '@/lib/utils';
 
-export function Sidebar() {
+const iconMap: Record<string, React.ReactNode> = {
+  Dashboard: <LayoutDashboard className="h-4 w-4" />,
+  People: <Users className="h-4 w-4" />,
+  Classes: <GraduationCap className="h-4 w-4" />,
+  Billing: <CreditCard className="h-4 w-4" />
+};
+
+type SidebarProps = {
+  forceVisible?: boolean;
+};
+
+export function Sidebar({ forceVisible = false }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useAuth();
 
@@ -17,16 +29,21 @@ export function Sidebar() {
   );
 
   return (
-    <aside className="hidden h-full flex-col gap-6 rounded-3xl border border-ink-900/10 bg-white p-6 shadow-card dark:border-white/10 dark:bg-ink-800 md:flex">
+    <aside
+      className={cn(
+        'h-full w-full flex-col gap-6 rounded-2xl border border-border bg-card p-6 shadow-sm md:flex md:w-[270px] md:sticky md:top-6',
+        forceVisible ? 'flex' : 'hidden'
+      )}
+    >
       <div className="space-y-1">
-        <p className="text-xs uppercase tracking-[0.4em] text-ink-700 dark:text-sand-100">
+        <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">
           EduFlow
         </p>
-        <p className="font-[var(--font-grotesk)] text-lg font-semibold text-ink-900 dark:text-white">
+        <p className="text-lg font-semibold tracking-tight">
           Control Center
         </p>
       </div>
-      <Separator className="dark:bg-white/10" />
+      <Separator />
       <nav className="space-y-1">
         {visibleItems.map((item) => {
           const active = pathname === item.href;
@@ -37,19 +54,22 @@ export function Sidebar() {
               className={cn(
                 'flex items-center justify-between rounded-xl px-3 py-2 text-sm transition',
                 active
-                  ? 'bg-ink-900 text-white dark:bg-white dark:text-ink-900'
-                  : 'text-ink-700 hover:bg-sand-100 dark:text-sand-100 dark:hover:bg-white/10'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
             >
-              <span>{item.label}</span>
+              <span className="flex items-center gap-2">
+                {iconMap[item.label] ?? null}
+                {item.label}
+              </span>
               {item.badge && <Badge variant="outline">{item.badge}</Badge>}
             </Link>
           );
         })}
       </nav>
       <div className="mt-auto space-y-2">
-        <p className="text-xs text-ink-700 dark:text-sand-100">Signed in as</p>
-        <p className="text-sm font-medium text-ink-900 dark:text-white">
+        <p className="text-xs text-muted-foreground">Signed in as</p>
+        <p className="text-sm font-medium text-foreground">
           {user?.email ?? 'Unknown'}
         </p>
       </div>

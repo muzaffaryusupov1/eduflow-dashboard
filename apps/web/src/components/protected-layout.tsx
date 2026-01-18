@@ -18,7 +18,7 @@ export function ProtectedLayout({ children }: { children: React.ReactNode }) {
   if (!hydrated) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-sm uppercase tracking-[0.2em] text-ink-700">
+        <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
           Loading
         </p>
       </div>
