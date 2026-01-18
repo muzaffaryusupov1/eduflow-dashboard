@@ -25,7 +25,7 @@ const Toast = React.forwardRef<
   <ToastPrimitive.Root
     ref={ref}
     className={cn(
-      'group relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-2xl border border-ink-900/10 bg-white px-4 py-3 shadow-card',
+      'group relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-2xl border border-border bg-background px-4 py-3 shadow-sm',
       className
     )}
     {...props}
@@ -39,7 +39,7 @@ const ToastTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitive.Title
     ref={ref}
-    className={cn('text-sm font-semibold text-ink-900', className)}
+    className={cn('text-sm font-semibold text-foreground', className)}
     {...props}
   />
 ));
@@ -51,7 +51,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-ink-700', className)}
+    className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
 ));
