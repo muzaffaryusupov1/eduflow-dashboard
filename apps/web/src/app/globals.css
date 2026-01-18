@@ -6,9 +6,17 @@
   color-scheme: light;
 }
 
+html.dark {
+  color-scheme: dark;
+}
+
 body {
   @apply bg-sand-50 text-ink-900;
   min-height: 100vh;
+}
+
+html.dark body {
+  @apply bg-ink-900 text-sand-50;
 }
 
 * {
