@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-sand-50 text-ink-900;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
