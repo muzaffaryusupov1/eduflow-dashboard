@@ -1,4 +1,3 @@
-import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from "next"
 import { Nunito_Sans } from "next/font/google"
 import "./globals.css"
@@ -23,7 +22,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${nunitoSans.variable} antialiased`}>
         <Providers>{children}</Providers>
-        <Toaster />
       </body>
     </html>
   );

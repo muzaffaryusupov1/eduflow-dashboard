@@ -15,14 +15,17 @@ const STORAGE_KEY = 'eduflow.auth';
 export function decodeJwt(token: string): AuthUser {
   try {
     const payload = token.split('.')[1];
-    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    let normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    while (normalized.length % 4 !== 0) {
+      normalized += '=';
+    }
     const decoded = JSON.parse(atob(normalized));
 
     return {
       email: decoded.email ?? 'user@eduflow.dev',
       role: decoded.role ?? 'TEACHER'
     } as AuthUser;
-  } catch (error) {
+  } catch {
     return { email: 'user@eduflow.dev', role: 'TEACHER' };
   }
 }
@@ -52,7 +55,7 @@ export function loadStoredAuth(): AuthTokens | null {
 
   try {
     return JSON.parse(raw) as AuthTokens;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

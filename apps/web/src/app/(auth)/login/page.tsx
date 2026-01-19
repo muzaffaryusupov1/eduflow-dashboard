@@ -41,7 +41,10 @@ export default function LoginPage() {
       router.push('/');
     },
     onError: (error) => {
-      toast.error('Login failed. Please check your credentials and try again.', {closeButton: true});
+      toast.error('Login failed. Please check your credentials and try again.', {
+        closeButton: true,
+        description: error?.message,
+      });
     }
   });
 
