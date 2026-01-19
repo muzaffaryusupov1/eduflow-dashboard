@@ -1,7 +1,5 @@
 "use client"
 
-import { usePathname } from "next/navigation"
-import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Sidebar,
   SidebarContent,
@@ -15,16 +13,19 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { Badge } from "@/components/ui/badge"
 import { navItems } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
+import { HugeiconsIcon } from "@hugeicons/react"
+import Link from 'next/link'
+import { usePathname } from "next/navigation"
+import { NavUser } from './app-shell/nav-user'
 
-export function AppSidebar() {
+export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
 
   return (
-    <Sidebar>
-      <SidebarHeader className="space-y-1">
+    <Sidebar collapsible='offExamples' {...props}>
+      <SidebarHeader className="space-y-1 p-5">
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
           EduFlow
         </p>
@@ -47,10 +48,10 @@ export function AppSidebar() {
                         active && "bg-sidebar-accent text-sidebar-accent-foreground"
                       )}
                     >
-                      <a href={item.href} className="flex items-center gap-2">
+                      <Link href={item.href} className="flex items-center gap-2">
                         <HugeiconsIcon icon={item.icon} size={18} />
                         <span>{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -60,14 +61,8 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarSeparator />
-      <SidebarFooter className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Signed in
-        </p>
-        <p className="text-sm font-medium">owner@eduflow.dev</p>
-        <Badge variant="secondary" className="w-fit">
-          OWNER
-        </Badge>
+      <SidebarFooter>
+        <NavUser user={{avatar: '', email: '@yusupoovdev@gmail.com', name: 'Muzaffar'}} />
       </SidebarFooter>
     </Sidebar>
   )
