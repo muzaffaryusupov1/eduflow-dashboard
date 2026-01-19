@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Separator } from '@/components/ui/separator'
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
@@ -33,9 +34,9 @@ export default function PeoplePage() {
         <Button variant="secondary">Add student</Button>
       </div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
+      <Card className='p-0 gap-0'>
+        <CardHeader className="px-4 py-3">
+          <div className="flex items-center justify-between p-0">
             <p className="text-sm text-muted-foreground">
               Page {data?.meta.page ?? page} · {data?.meta.total ?? 0} total
             </p>
@@ -44,6 +45,7 @@ export default function PeoplePage() {
             </Button>
           </div>
         </CardHeader>
+        <Separator decorative />
         <CardContent className="p-0">
           {isError ? (
             <div className="p-6 text-sm text-destructive">

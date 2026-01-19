@@ -1,7 +1,7 @@
 "use client"
 
-import { UserIcon, LogoutIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,13 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { LogoutIcon, UserIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { useAuth } from '../auth-provider'
 
 export function UserMenu() {
+  const {logout} = useAuth()
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className='py-5'>
         <Button variant="outline" className="gap-3">
           <Avatar className="h-8 w-8">
             <AvatarFallback>OY</AvatarFallback>
@@ -35,7 +38,7 @@ export function UserMenu() {
           Profile
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={logout}>
           <HugeiconsIcon icon={LogoutIcon} size={16} />
           Sign out
         </DropdownMenuItem>
