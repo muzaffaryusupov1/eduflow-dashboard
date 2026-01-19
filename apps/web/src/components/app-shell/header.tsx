@@ -1,48 +1,21 @@
-"use client"
-
-import { usePathname } from "next/navigation"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { ThemeToggle } from "./theme-toggle"
-import { UserMenu } from "./user-menu"
-import { MobileNavSheet } from "./mobile-nav-sheet"
-
-const pageTitles: Record<string, string> = {
-  "/dashboard": "Dashboard",
-  "/people": "People",
-  "/classes": "Classes",
-  "/billing": "Billing",
-}
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { ThemeToggle } from './theme-toggle'
+import { UserMenu } from './user-menu'
 
 export function Header() {
-  const pathname = usePathname()
-  const title = pageTitles[pathname] ?? "Dashboard"
-
   return (
-    <TooltipProvider>
-      <header className="sticky top-6 z-40 flex items-center justify-between rounded-xl border border-border bg-background/80 px-4 py-4 shadow-sm backdrop-blur md:px-6">
-        <div className="flex items-center gap-4">
-          <MobileNavSheet />
-          <div className="space-y-2">
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/dashboard">EduFlow</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{title}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
+    <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+      <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
+        <SidebarTrigger className="-ml-1" />
+        {/* <Separator
+          orientation="vertical"
+          className="mx-2 data-[orientation=vertical]:h-4"
+        /> */}
+        <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle/>
           <UserMenu />
         </div>
-      </header>
-    </TooltipProvider>
+      </div>
+    </header>
   )
 }

@@ -1,10 +1,10 @@
 "use client"
 
-import { useTheme } from "next-themes"
-import { Moon01Icon, Sun01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Moon02Icon, Sun03Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { useTheme } from "next-themes"
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
@@ -19,7 +19,7 @@ export function ThemeToggle() {
           size="icon"
           onClick={() => setTheme(isDark ? "light" : "dark")}
         >
-          <HugeiconsIcon icon={isDark ? Sun01Icon : Moon01Icon} size={18} />
+          <HugeiconsIcon icon={isDark ? Sun03Icon : Moon02Icon} size={18} />
         </Button>
       </TooltipTrigger>
       <TooltipContent>
