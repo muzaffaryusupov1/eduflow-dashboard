@@ -9,6 +9,14 @@
    - `pnpm --filter @eduflow/api prisma db seed`
 4. Start services:
    - API: `pnpm --filter @eduflow/api dev`
+   - Web: `pnpm --filter web dev`
+
+## Web app
+
+- Local dev: `pnpm --filter web dev`
+- Add shadcn/ui component:
+  - `cd apps/web`
+  - `pnpm dlx shadcn@latest add <component>`
 
 ## API docs
 

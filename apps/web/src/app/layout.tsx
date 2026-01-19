@@ -1,37 +1,27 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { QueryProvider } from '@/components/query-provider';
-import { AuthProvider } from '@/components/auth-provider';
-import { Toaster } from '@/components/ui/toaster';
-import { ToastProvider } from '@/components/ui/use-toast';
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css";
+import { Providers } from "./providers"
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans'
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: 'EduFlow',
-  description: 'Education Center Management System'
+  title: "EduFlow",
+  description: "EduFlow education center management",
 };
 
 export default function RootLayout({
-  children
-}: {
+  children,
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="font-sans">
-        <QueryProvider>
-          <AuthProvider>
-            <ToastProvider>
-              {children}
-              <Toaster />
-            </ToastProvider>
-          </AuthProvider>
-        </QueryProvider>
+    <html lang="en">
+      <body className={`${inter.variable} antialiased`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

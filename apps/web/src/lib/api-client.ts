@@ -1,27 +1,24 @@
-import type { AuthTokens } from './auth';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+type FetchOptions = RequestInit & {
+  authToken?: string
+}
 
-type LoginInput = {
-  email: string;
-  password: string;
-};
-
-type LoginResponse = AuthTokens;
-
-export async function apiLogin(input: LoginInput): Promise<LoginResponse> {
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
+export async function apiFetch<T>(path: string, options: FetchOptions = {}) {
+  const { authToken, headers, ...rest } = options
+  const response = await fetch(`${API_URL}${path}`, {
+    ...rest,
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      ...(headers ?? {}),
     },
-    body: JSON.stringify(input)
-  });
+  })
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || 'Unable to sign in');
+    const text = await response.text()
+    throw new Error(text || "Request failed")
   }
 
-  return response.json();
+  return response.json() as Promise<T>
 }
