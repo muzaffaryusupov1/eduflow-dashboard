@@ -1,11 +1,11 @@
 "use client"
 
-import { usePathname } from "next/navigation"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { usePathname } from "next/navigation"
 import { ThemeToggle } from "./theme-toggle"
 import { UserMenu } from "./user-menu"
-import { MobileNavSheet } from "./mobile-nav-sheet"
+// import { MobileNavSheet } from "./mobile-nav-sheet"
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -22,7 +22,7 @@ export function Header() {
     <TooltipProvider>
       <header className="sticky top-6 z-40 flex items-center justify-between rounded-xl border border-border bg-background/80 px-4 py-4 shadow-sm backdrop-blur md:px-6">
         <div className="flex items-center gap-4">
-          <MobileNavSheet />
+          {/* <MobileNavSheet /> */}
           <div className="space-y-2">
             <Breadcrumb>
               <BreadcrumbList>
