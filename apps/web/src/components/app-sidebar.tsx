@@ -25,7 +25,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar collapsible='offExamples' {...props}>
-      <SidebarHeader className="space-y-1 p-5">
+      <SidebarHeader className={"space-y-1 p-5"} >
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
           EduFlow
         </p>

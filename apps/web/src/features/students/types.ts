@@ -10,8 +10,9 @@ export type Student = {
 
 export type StudentsFilters = {
   page?: number
-  pageSize?: number
+  limit?: number
   q?: string
+  status?: 'active' | 'inactive'
 }
 
 export type StudentCreateInput = {
@@ -29,7 +30,7 @@ export type StudentsListResponse = {
   data: Student[]
   meta: {
     page: number
-    pageSize: number
+    limit: number
     total: number
   }
 }

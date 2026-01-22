@@ -19,7 +19,7 @@ export function UserMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className='py-5'>
+      <DropdownMenuTrigger asChild className='py-5 border-none'>
         <Button variant="outline" className="gap-3">
           <Avatar className="h-8 w-8">
             <AvatarFallback>OY</AvatarFallback>

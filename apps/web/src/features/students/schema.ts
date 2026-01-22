@@ -13,6 +13,7 @@ export const studentUpdateSchema = studentCreateSchema.partial().extend({
 
 export const studentsFilterSchema = z.object({
   page: z.number().int().min(1).optional(),
-  pageSize: z.number().int().min(1).max(100).optional(),
+  limit: z.number().int().min(1).max(100).optional(),
   q: z.string().optional(),
+  status: z.enum(["active", "inactive"]).optional(),
 })

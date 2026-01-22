@@ -10,8 +10,9 @@ import type {
 export async function fetchStudents(filters: StudentsFilters = {}) {
   const params = new URLSearchParams()
   if (filters.page) params.set("page", String(filters.page))
-  if (filters.pageSize) params.set("pageSize", String(filters.pageSize))
+  if (filters.limit) params.set("limit", String(filters.limit))
   if (filters.q) params.set("search", filters.q)
+  if (filters.status) params.set("status", filters.status)
 
   const query = params.toString()
   return httpClient<StudentsListResponse>(`/students${query ? `?${query}` : ""}`)
