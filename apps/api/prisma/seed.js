@@ -15,6 +15,21 @@ async function main() {
   });
 
   console.log(`Seeded OWNER user: ${email}`);
+
+  const courses = [
+    { title: 'Mathematics Fundamentals', monthlyPrice: 120, status: 'ACTIVE' },
+    { title: 'English for Beginners', monthlyPrice: 90, status: 'ACTIVE' },
+    { title: 'Physics Lab', monthlyPrice: 150, status: 'INACTIVE' },
+  ];
+
+  for (const course of courses) {
+    await prisma.course.upsert({
+      where: { title: course.title },
+      update: course,
+      create: course,
+    });
+  }
+  console.log('Seeded sample courses');
 }
 
 main()
