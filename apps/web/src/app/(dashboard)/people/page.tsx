@@ -12,15 +12,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { StudentFormDialog } from "@/features/students/components/student-form-dialog"
 import { useStudents } from "@/features/students/queries"
+import type { Student } from "@/features/students/types"
 import { useMemo, useState } from "react"
 
 export default function PeoplePage() {
-  const [page] = useState(1)
+  const [page, setPage] = useState(1)
+  const [limit] = useState(10)
   const [q] = useState<string | undefined>(undefined)
-  const { data, isLoading, isError, refetch } = useStudents({ page, q })
+  const { data, isLoading, isError, refetch, isFetching } = useStudents({ page, limit, q })
 
   const rows = useMemo(() => data?.data ?? [], [data])
+  const total = data?.meta.total ?? 0
+  const pageSize = data?.meta.limit ?? limit
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const canPrev = page > 1
+  const canNext = page < totalPages
 
   return (
     <div className="space-y-6">
@@ -31,17 +39,17 @@ export default function PeoplePage() {
             Manage student profiles and contact details.
           </p>
         </div>
-        <Button variant="secondary">Add student</Button>
+        <StudentFormDialog mode="create" trigger={<Button variant="secondary">Add student</Button>} />
       </div>
 
       <Card className='p-0 gap-0'>
         <CardHeader className="px-4 py-3">
           <div className="flex items-center justify-between p-0">
             <p className="text-sm text-muted-foreground">
-              Page {data?.meta.page ?? page} · {data?.meta.total ?? 0} total
+              Page {data?.meta.page ?? page} of {totalPages} · {total} total
             </p>
-            <Button variant="ghost" size="sm" onClick={() => refetch()}>
-              Refresh
+            <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? "Refreshing..." : "Refresh"}
             </Button>
           </div>
         </CardHeader>
@@ -86,20 +94,56 @@ export default function PeoplePage() {
                   </TableRow>
                 )}
                 {!isLoading &&
-                  rows.map((student) => (
+                  rows.map((student: Student) => (
                     <TableRow key={student.id}>
                       <TableCell className="font-medium">
                         {student.firstName} {student.lastName}
                       </TableCell>
                       <TableCell>{student.email}</TableCell>
-                      <TableCell>
-                        {student.isActive ? "Active" : "Inactive"}
+                      <TableCell className="flex items-center gap-2">
+                        <span>{student.isActive ? "Active" : "Inactive"}</span>
+                        <StudentFormDialog
+                          mode="edit"
+                          student={student}
+                          trigger={
+                            <Button variant="ghost" size="sm">
+                              Edit
+                            </Button>
+                          }
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
               </TableBody>
             </Table>
           )}
+          <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-muted-foreground">
+            <div>
+              Showing {(page - 1) * pageSize + (rows.length ? 1 : 0)}-
+              {(page - 1) * pageSize + rows.length} of {total}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={!canPrev || isFetching}
+              >
+                Previous
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                Page {page} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={!canNext || isFetching}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

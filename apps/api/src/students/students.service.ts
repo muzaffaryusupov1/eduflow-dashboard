@@ -10,26 +10,31 @@ export class StudentsService{
 
   async getStudents(query: GetStudentsDto){
     const page = query.page ?? 1
-    const pageSize = query.pageSize ?? 10
+    const limit = query.limit ?? 10
     const search = query.search?.trim()
-    const skip = (page - 1) * pageSize
+    const skip = (page - 1) * limit
 
-    const where = search
-      ? {
-          OR: [
-            { firstName: { contains: search, mode: 'insensitive' } },
-            { lastName: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } },
-            { phone: { contains: search, mode: 'insensitive' } }
-          ]
-        }
-      : undefined
+    const statusFilter = query.status === 'active' ? true : query.status === 'inactive' ? false : undefined
+
+      const where = {
+        ...(search
+          ? {
+              OR: [
+                { firstName: { contains: search, lte: 'insensitive' } },
+                { lastName: { contains: search, lte: 'insensitive' } },
+                { email: { contains: search, lte: 'insensitive' } },
+                { phone: { contains: search, lte: 'insensitive' } }
+              ]
+            }
+          : {}),
+        ...(statusFilter !== undefined ? { isActive: statusFilter } : {})
+      }
 
     const [data, total] = await Promise.all([
       this.prisma.student.findMany({
         where,
         skip,
-        take: pageSize,
+        take: limit,
         orderBy: { createdAt: 'desc' }
       }),
       this.prisma.student.count({ where })
@@ -37,7 +42,7 @@ export class StudentsService{
 
     return {
       data,
-      meta: { page, pageSize, total }
+      meta: { page, limit, total }
     }
   }
 

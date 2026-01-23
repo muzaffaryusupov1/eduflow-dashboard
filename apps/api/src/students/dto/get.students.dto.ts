@@ -1,6 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
+import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
+
+const STATUS_VALUES = ['active', 'inactive'] as const
+export type StudentStatusFilter = (typeof STATUS_VALUES)[number]
 
 export class GetStudentsDto{
   @ApiPropertyOptional({ description: 'Search by name, email, or phone' })
@@ -21,5 +24,14 @@ export class GetStudentsDto{
   @IsInt()
   @Min(1)
   @Max(100)
-  pageSize?: number
+  limit?: number
+
+  @ApiPropertyOptional({
+    description: 'Filter by student status',
+    enum: STATUS_VALUES,
+    example: 'active'
+  })
+  @IsOptional()
+  @IsIn(STATUS_VALUES)
+  status?: StudentStatusFilter
 }

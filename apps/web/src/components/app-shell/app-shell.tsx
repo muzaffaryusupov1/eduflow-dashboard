@@ -8,7 +8,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       "--sidebar-width": "calc(var(--spacing) * 72)",
       "--header-height": "calc(var(--spacing) * 12)",
     } as React.CSSProperties}>
-      <AppSidebar variant='inset'/>
+      <AppSidebar variant='inset' collapsible='icon'/>
        <SidebarInset>
           <Header />
           <div className='flex flex-1 flex-col'>
