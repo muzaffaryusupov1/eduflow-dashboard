@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/client"
 }
 
 datasource db {
@@ -11,8 +10,11 @@ datasource db {
 model User {
   id               String   @id @default(cuid())
   email            String   @unique
+  fullName         String?
+  phone            String?
   passwordHash     String
   role             String   @default("OWNER")
+  isActive         Boolean  @default(true)
   refreshTokenHash String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -37,4 +39,11 @@ model Course {
   status       String   @default("ACTIVE")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model GlobalSession {
+  id              Int      @id
+  activeSessionId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

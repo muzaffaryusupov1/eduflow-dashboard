@@ -10,8 +10,8 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email },
-    update: { passwordHash, role: 'OWNER' },
-    create: { email, passwordHash, role: 'OWNER' },
+    update: { passwordHash, role: 'OWNER', fullName: 'Owner Admin' },
+    create: { email, passwordHash, role: 'OWNER', fullName: 'Owner Admin' },
   });
 
   console.log(`Seeded OWNER user: ${email}`);
@@ -30,6 +30,25 @@ async function main() {
     });
   }
   console.log('Seeded sample courses');
+
+  await prisma.globalSession.upsert({
+    where: { id: 1 },
+    update: { activeSessionId: 'seed-session' },
+    create: { id: 1, activeSessionId: 'seed-session' },
+  });
+  console.log('Seeded global session');
+
+  await prisma.user.upsert({
+    where: { email: 'teacher@eduflow.dev' },
+    update: { passwordHash, role: 'TEACHER', fullName: 'Teacher One' },
+    create: {
+      email: 'teacher@eduflow.dev',
+      passwordHash,
+      role: 'TEACHER',
+      fullName: 'Teacher One',
+    },
+  });
+  console.log('Seeded teacher user');
 }
 
 main()

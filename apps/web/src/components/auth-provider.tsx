@@ -4,9 +4,14 @@ import {
   AuthTokens,
   AuthUser,
   decodeJwt,
-  loadStoredAuth,
-  saveAuth,
 } from "@/lib/auth"
+import {
+  clearTokens,
+  getAccessToken,
+  getRefreshToken,
+  migrateLegacyAuthObject,
+  setTokens as persistTokens,
+} from "@/lib/auth/token-storage"
 import {
   createContext,
   useCallback,
@@ -28,9 +33,14 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 function getInitialAuth(): { tokens: AuthTokens | null; user: AuthUser | null } {
   if (typeof window === "undefined") return { tokens: null, user: null }
-  const stored = loadStoredAuth()
-  if (!stored) return { tokens: null, user: null }
-  return { tokens: stored, user: decodeJwt(stored.accessToken) }
+  migrateLegacyAuthObject()
+  const accessToken = getAccessToken()
+  const refreshToken = getRefreshToken()
+  if (!accessToken || !refreshToken) return { tokens: null, user: null }
+  return {
+    tokens: { accessToken, refreshToken },
+    user: decodeJwt(accessToken),
+  }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -42,13 +52,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback((newTokens: AuthTokens) => {
     setTokens(newTokens)
     setUser(decodeJwt(newTokens.accessToken))
-    saveAuth(newTokens)
+    persistTokens(newTokens)
   }, [])
 
   const logout = useCallback(() => {
     setTokens(null)
     setUser(null)
-    saveAuth(null)
+    clearTokens()
   }, [])
 
   const value = useMemo(

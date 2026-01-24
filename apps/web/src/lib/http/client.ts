@@ -1,5 +1,11 @@
 import { env } from "@/lib/config/env"
 import { ApiError } from "./types"
+import {
+  clearTokens,
+  getAccessToken,
+  getRefreshToken,
+  setTokens,
+} from "@/lib/auth/token-storage"
 
 type HttpMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE"
 
@@ -7,19 +13,20 @@ type RequestOptions = {
   method?: HttpMethod
   headers?: Record<string, string>
   body?: unknown
-  authToken?: string
   cache?: RequestCache
+  _retry?: boolean
 }
 
 export async function httpClient<T>(
   path: string,
-  { method = "GET", headers, body, authToken, cache }: RequestOptions = {}
+  { method = "GET", headers, body, cache, _retry }: RequestOptions = {}
 ): Promise<T> {
+  const accessToken = getAccessToken()
   const response = await fetch(`${env.apiUrl}${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",
-      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...(headers ?? {}),
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -31,6 +38,32 @@ export async function httpClient<T>(
   const parsed = isJson ? await response.json().catch(() => null) : await response.text()
 
   if (!response.ok) {
+    if ((response.status === 401 || response.status === 403) && !_retry) {
+      const refreshToken = getRefreshToken()
+      if (refreshToken) {
+        try {
+          const refreshResponse = await fetch(`${env.apiUrl}/auth/refresh`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken }),
+          })
+          if (refreshResponse.ok) {
+            const refreshed = (await refreshResponse.json()) as {
+              accessToken: string
+              refreshToken: string
+            }
+            setTokens(refreshed)
+            return httpClient<T>(path, { method, headers, body, cache, _retry: true })
+          }
+        } catch {
+          // fall through to logout
+        }
+      }
+      clearTokens()
+      if (typeof window !== "undefined") {
+        window.location.replace("/login")
+      }
+    }
     throw new ApiError({
       status: response.status,
       message:
