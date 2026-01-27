@@ -16,6 +16,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react"
@@ -31,23 +32,23 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
-function getInitialAuth(): { tokens: AuthTokens | null; user: AuthUser | null } {
-  if (typeof window === "undefined") return { tokens: null, user: null }
-  migrateLegacyAuthObject()
-  const accessToken = getAccessToken()
-  const refreshToken = getRefreshToken()
-  if (!accessToken || !refreshToken) return { tokens: null, user: null }
-  return {
-    tokens: { accessToken, refreshToken },
-    user: decodeJwt(accessToken),
-  }
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const initial = getInitialAuth()
-  const [tokens, setTokens] = useState<AuthTokens | null>(initial.tokens)
-  const [user, setUser] = useState<AuthUser | null>(initial.user)
-  const [hydrated] = useState(() => typeof window !== "undefined")
+  const [tokens, setTokens] = useState<AuthTokens | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    migrateLegacyAuthObject()
+    const accessToken = getAccessToken()
+    const refreshToken = getRefreshToken()
+
+    if (accessToken && refreshToken) {
+      setTokens({ accessToken, refreshToken })
+      setUser(decodeJwt(accessToken))
+    }
+
+    setHydrated(true)
+  }, [])
 
   const login = useCallback((newTokens: AuthTokens) => {
     setTokens(newTokens)
