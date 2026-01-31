@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/query/keys"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   createStaff,
   fetchStaff,
@@ -69,7 +69,7 @@ export function useResetStaffPassword() {
 }
 
 export function useTeachersOptions() {
-  const { data, isLoading } = useStaffList({ page: 1, pageSize: 200 })
+  const { data, isLoading } = useStaffList({ page: 1, pageSize: 100 })
   return {
     isLoading,
     options:

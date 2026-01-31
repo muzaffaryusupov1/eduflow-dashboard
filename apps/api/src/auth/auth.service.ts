@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import * as bcrypt from 'bcryptjs'
-import * as jwt from 'jsonwebtoken'
 import { randomUUID } from 'crypto'
+import * as jwt from 'jsonwebtoken'
 import { PrismaService } from '../prisma/prisma.service'
 import { Role } from './roles.enum'
 
@@ -29,6 +29,10 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (user.isActive === false) {
+      throw new UnauthorizedException('User account is inactive');
     }
 
     const isValid = await bcrypt.compare(password, user.passwordHash);

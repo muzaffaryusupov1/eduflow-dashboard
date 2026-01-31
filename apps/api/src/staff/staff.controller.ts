@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { RolesGuard } from '../auth/guards/roles.guard'
 import { Roles } from '../auth/roles.decorator'
 import { Role } from '../auth/roles.enum'
@@ -28,6 +28,7 @@ export class StaffController {
   @Get('staff')
   @Roles(Role.OWNER, Role.ADMIN)
   @UseGuards(RolesGuard)
+  @ApiOperation({summary: 'staff get all staffs'})
   list(@Query() query: GetStaffDto) {
     return this.staffService.list(query)
   }

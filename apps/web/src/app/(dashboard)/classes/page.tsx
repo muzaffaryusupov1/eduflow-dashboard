@@ -1,66 +1,110 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { CoursesTable } from "@/features/courses/components/courses-table"
-import { CourseFormDialog } from "@/features/courses/components/course-form-dialog"
+import { GroupFormDialog } from "@/features/groups/components/group-form-dialog"
+import { GroupsTable } from "@/features/groups/components/groups-table"
+import { useGroups } from "@/features/groups/queries"
 import { useCourses } from "@/features/courses/queries"
+import { useTeachersOptions } from "@/features/staff/queries"
 
 export default function ClassesPage() {
+  const router = useRouter()
   const [page, setPage] = useState(1)
-  const [limit] = useState(10)
+  const [pageSize] = useState(10)
   const [search, setSearch] = useState("")
-  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const [debounced, setDebounced] = useState("")
+  const [courseId, setCourseId] = useState("")
+  const [teacherId, setTeacherId] = useState("")
+  const [status, setStatus] = useState("")
 
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 350)
+    const t = setTimeout(() => setDebounced(search), 300)
     return () => clearTimeout(t)
   }, [search])
 
-  const { data, isLoading, isError, refetch, isFetching } = useCourses({
+  const groupsQuery = useGroups({
     page,
-    limit,
-    q: debouncedSearch || undefined,
+    pageSize,
+    q: debounced || undefined,
+    courseId: courseId || undefined,
+    teacherId: teacherId || undefined,
+    status: status ? (status as "ACTIVE" | "PAUSED" | "FINISHED") : undefined,
   })
 
-  const courses = useMemo(() => data?.data ?? [], [data])
-  const total = data?.meta.total ?? 0
+  const coursesQuery = useCourses({ page: 1, limit: 100 })
+  const teachers = useTeachersOptions()
+
+  const groups = useMemo(() => groupsQuery.data?.items ?? [], [groupsQuery.data])
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold">Courses</h2>
+            <h2 className="text-xl font-semibold">Groups</h2>
             <p className="text-sm text-muted-foreground">
-              Manage course catalog, pricing, and availability.
+              Manage classes, schedules, and teacher assignments.
             </p>
           </div>
-          <CourseFormDialog mode="create" trigger={<Button variant="secondary">New course</Button>} />
+          <GroupFormDialog mode="create" trigger={<Button variant="secondary">New group</Button>} />
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="grid gap-3 lg:grid-cols-4">
             <Input
-              placeholder="Search courses..."
+              placeholder="Search groups..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="sm:max-w-xs"
             />
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              {isFetching ? "Updating list..." : null}
-            </div>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              value={courseId}
+              onChange={(e) => setCourseId(e.target.value)}
+            >
+              <option value="">All courses</option>
+              {coursesQuery.data?.data.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.title}
+                </option>
+              ))}
+            </select>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              value={teacherId}
+              onChange={(e) => setTeacherId(e.target.value)}
+            >
+              <option value="">All teachers</option>
+              {teachers.options.map((teacher) => (
+                <option key={teacher.value} value={teacher.value}>
+                  {teacher.label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="">All statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="PAUSED">Paused</option>
+              <option value="FINISHED">Finished</option>
+            </select>
           </div>
-          <CoursesTable
-            courses={courses}
-            page={data?.meta.page ?? page}
-            limit={data?.meta.limit ?? limit}
-            total={total}
-            isLoading={isLoading}
-            isError={isError}
-            onPageChange={(p) => setPage(p)}
-            onRefresh={() => refetch()}
+
+          <GroupsTable
+            groups={groups}
+            page={groupsQuery.data?.page ?? page}
+            pageSize={groupsQuery.data?.pageSize ?? pageSize}
+            total={groupsQuery.data?.total ?? 0}
+            isLoading={groupsQuery.isLoading}
+            isError={groupsQuery.isError}
+            onPageChange={setPage}
+            onRefresh={() => groupsQuery.refetch()}
+            onRowClick={(id) => router.push(`/classes/${id}`)}
           />
         </CardContent>
       </Card>
