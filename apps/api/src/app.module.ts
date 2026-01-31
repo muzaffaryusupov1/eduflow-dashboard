@@ -7,10 +7,11 @@ import { PrismaModule } from './prisma/prisma.module'
 import { StudentsModule } from './students/students.module'
 import { CoursesModule } from './courses/courses.module'
 import { StaffModule } from './staff/staff.module'
+import { GroupsModule } from './groups/groups.module'
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
 
 @Module({
-  imports: [PrismaModule, AuthModule, StudentsModule, CoursesModule, StaffModule],
+  imports: [PrismaModule, AuthModule, StudentsModule, CoursesModule, StaffModule, GroupsModule],
   controllers: [AppController],
   providers: [
     AppService,
