@@ -1,9 +1,12 @@
 'use client'
 
+import { useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Separator } from '@/components/ui/separator'
+import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Table,
   TableBody,
@@ -15,9 +18,37 @@ import {
 import { StudentFormDialog } from "@/features/students/components/student-form-dialog"
 import { useStudents } from "@/features/students/queries"
 import type { Student } from "@/features/students/types"
-import { useMemo, useState } from "react"
+import { useStaffList } from "@/features/staff/queries"
+import { StaffFormDialog } from "@/features/staff/components/staff-form-dialog"
+import { StaffTable } from "@/features/staff/components/staff-table"
 
 export default function PeoplePage() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold tracking-tight">People</h2>
+        <p className="text-sm text-muted-foreground">
+          Manage students and teaching staff.
+        </p>
+      </div>
+
+      <Tabs defaultValue="students" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="students">Students</TabsTrigger>
+          <TabsTrigger value="staff">Staff</TabsTrigger>
+        </TabsList>
+        <TabsContent value="students">
+          <StudentsTab />
+        </TabsContent>
+        <TabsContent value="staff">
+          <StaffTab />
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
+
+function StudentsTab() {
   const [page, setPage] = useState(1)
   const [limit] = useState(10)
   const [q] = useState<string | undefined>(undefined)
@@ -42,7 +73,7 @@ export default function PeoplePage() {
         <StudentFormDialog mode="create" trigger={<Button variant="secondary">Add student</Button>} />
       </div>
 
-      <Card className='p-0 gap-0'>
+      <Card className="p-0 gap-0">
         <CardHeader className="px-4 py-3">
           <div className="flex items-center justify-between p-0">
             <p className="text-sm text-muted-foreground">
@@ -144,6 +175,64 @@ export default function PeoplePage() {
               </Button>
             </div>
           </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function StaffTab() {
+  const [page, setPage] = useState(1)
+  const [pageSize] = useState(10)
+  const [search, setSearch] = useState("")
+  const [debounced, setDebounced] = useState("")
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(search), 300)
+    return () => clearTimeout(t)
+  }, [search])
+
+  const { data, isLoading, isError, refetch } = useStaffList({
+    page,
+    pageSize,
+    q: debounced || undefined,
+  })
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">Staff</h2>
+          <p className="text-sm text-muted-foreground">
+            Teachers are managed as users with the TEACHER role.
+          </p>
+        </div>
+        <StaffFormDialog mode="create" trigger={<Button variant="secondary">New teacher</Button>} />
+      </div>
+
+      <Card>
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-sm text-muted-foreground">
+            Search teachers by name or email.
+          </div>
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search staff..."
+            className="sm:max-w-xs"
+          />
+        </CardHeader>
+        <CardContent className="p-0">
+          <StaffTable
+            staff={data?.data ?? []}
+            page={data?.meta.page ?? page}
+            pageSize={data?.meta.pageSize ?? pageSize}
+            total={data?.meta.total ?? 0}
+            isLoading={isLoading}
+            isError={isError}
+            onPageChange={setPage}
+            onRefresh={() => refetch()}
+          />
         </CardContent>
       </Card>
     </div>

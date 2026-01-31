@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { Public } from './public.decorator';
 import { Roles } from './roles.decorator';
 import { Role } from './roles.enum';
 
@@ -14,11 +15,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @Public()
   login(@Body() body: LoginDto) {
     return this.authService.login(body.email, body.password);
   }
 
   @Post('refresh')
+  @Public()
   refresh(@Body() body: RefreshDto) {
     return this.authService.refresh(body.refreshToken);
   }

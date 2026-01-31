@@ -18,6 +18,17 @@
   - `cd apps/web`
   - `pnpm dlx shadcn@latest add <component>`
 
+### Auth tokens (frontend)
+- Tokens are stored in localStorage:
+  - `eduflow.accessToken`
+  - `eduflow.refreshToken`
+- Legacy key `eduflow.auth` is auto-migrated on first load.
+- On 401/403, the client tries `/auth/refresh` once, then redirects to `/login` if refresh fails.
+
+### Single active session (backend)
+- Only one active session is allowed system-wide.
+- A new login rotates the global session id and invalidates all previous tokens.
+
 ## API docs
 
 Swagger UI is available at `http://localhost:3001/docs`.
