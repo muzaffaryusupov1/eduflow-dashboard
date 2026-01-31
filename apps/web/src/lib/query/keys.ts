@@ -23,4 +23,11 @@ export const queryKeys = {
       ["groups", "list", filters ?? {}] as const,
     detail: (id: string) => ["groups", "detail", id] as const,
   },
+  enrollments: {
+    root: ["enrollments"] as const,
+    group: (groupId: string, filters?: Record<string, unknown>) =>
+      ["enrollments", "group", groupId, filters ?? {}] as const,
+    student: (studentId: string) =>
+      ["enrollments", "student", studentId] as const,
+  },
 }

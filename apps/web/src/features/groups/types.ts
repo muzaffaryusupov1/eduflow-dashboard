@@ -11,6 +11,7 @@ export type Group = {
   status: GroupStatus
   createdAt: string
   updatedAt: string
+  studentsCount?: number
   course?: { id: string; title: string }
   teacher?: { id: string; fullName?: string | null; email: string }
 }

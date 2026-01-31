@@ -69,6 +69,7 @@ export function GroupsTable({
                 <TableHead>Teacher</TableHead>
                 <TableHead>Schedule</TableHead>
                 <TableHead>Start date</TableHead>
+                <TableHead>O&apos;quvchilar soni</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -92,6 +93,9 @@ export function GroupsTable({
                       </TableCell>
                       <TableCell>
                         <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-12" />
                       </TableCell>
                       <TableCell className="text-right">
                         <Skeleton className="h-4 w-24 ml-auto" />
@@ -119,6 +123,9 @@ export function GroupsTable({
                     <TableCell onClick={() => onRowClick(group.id)}>{group.scheduleText}</TableCell>
                     <TableCell onClick={() => onRowClick(group.id)}>
                       {new Date(group.startDate).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell onClick={() => onRowClick(group.id)}>
+                      {group.studentsCount ?? 0}
                     </TableCell>
                     <TableCell onClick={() => onRowClick(group.id)}>
                       <Badge variant="secondary">{group.status}</Badge>

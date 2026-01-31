@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { EnrollmentsService } from '../enrollments/enrollments.service'
 import { CreateStudentDto } from './dto/create.student.dto'
 import { GetStudentsDto } from './dto/get.students.dto'
 import { UpdateStudentDto } from './dto/update.student.dto'
@@ -8,7 +9,10 @@ import { StudentsService } from './students.service'
 @ApiTags('students')
 @Controller()
 export class StudentsController{
-  constructor(private readonly studentService: StudentsService){}
+  constructor(
+    private readonly studentService: StudentsService,
+    private readonly enrollmentsService: EnrollmentsService
+  ){}
 
   @Get('students')
   getStudents(@Query() query: GetStudentsDto){
@@ -28,6 +32,11 @@ export class StudentsController{
   @Get('students/:id')
   async getStudent(@Param('id') id: string){
     return await this.studentService.getStudent(id)
+  }
+
+  @Get('students/:id/enrollments')
+  async getStudentEnrollments(@Param('id') id: string) {
+    return await this.enrollmentsService.listByStudent(id)
   }
 
   @Delete('students/:id')

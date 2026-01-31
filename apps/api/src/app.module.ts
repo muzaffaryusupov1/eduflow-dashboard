@@ -8,10 +8,19 @@ import { StudentsModule } from './students/students.module'
 import { CoursesModule } from './courses/courses.module'
 import { StaffModule } from './staff/staff.module'
 import { GroupsModule } from './groups/groups.module'
+import { EnrollmentsModule } from './enrollments/enrollments.module'
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
 
 @Module({
-  imports: [PrismaModule, AuthModule, StudentsModule, CoursesModule, StaffModule, GroupsModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    StudentsModule,
+    CoursesModule,
+    StaffModule,
+    GroupsModule,
+    EnrollmentsModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

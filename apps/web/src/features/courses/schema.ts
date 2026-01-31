@@ -3,7 +3,7 @@ import { z } from "zod"
 export const courseBaseSchema = z.object({
   title: z.string().min(2, "Title is required"),
   monthlyPrice: z
-    .number({ invalid_type_error: "Price must be a number" })
+    .number({ error: "Price must be a number" })
     .min(0, "Price cannot be negative"),
   status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
 })
