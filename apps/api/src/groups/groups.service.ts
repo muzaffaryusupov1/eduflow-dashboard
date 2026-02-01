@@ -48,7 +48,26 @@ export class GroupsService {
       this.prisma.group.count({ where }),
     ])
 
-    return { items, total, page, pageSize }
+    const groupIds = items.map((group) => group.id)
+    const activeCounts = await this.prisma.enrollment.groupBy({
+      by: ['groupId'],
+      where: {
+        groupId: { in: groupIds },
+        status: 'ACTIVE',
+      },
+      _count: { _all: true },
+    })
+
+    const activeCountMap = new Map(
+      activeCounts.map((row) => [row.groupId, row._count._all])
+    )
+
+    const itemsWithCounts = items.map((group) => ({
+      ...group,
+      studentsCount: activeCountMap.get(group.id) ?? 0,
+    }))
+
+    return { items: itemsWithCounts, total, page, pageSize }
   }
 
   async create(dto: CreateGroupDto) {
@@ -89,7 +108,11 @@ export class GroupsService {
       throw new NotFoundException('Group not found')
     }
 
-    return group
+    const studentsCount = await this.prisma.enrollment.count({
+      where: { groupId: id, status: 'ACTIVE' },
+    })
+
+    return { ...group, studentsCount }
   }
 
   async update(id: string, dto: UpdateGroupDto) {
@@ -104,7 +127,7 @@ export class GroupsService {
 
     this.ensureDates(dto.startDate ?? existing.startDate.toISOString(), dto.endDate)
 
-    return this.prisma.group.update({
+    const updated = await this.prisma.group.update({
       where: { id },
       data: {
         title: dto.title,
@@ -120,6 +143,12 @@ export class GroupsService {
         teacher: { select: { id: true, fullName: true, email: true } },
       },
     })
+
+    const studentsCount = await this.prisma.enrollment.count({
+      where: { groupId: id, status: 'ACTIVE' },
+    })
+
+    return { ...updated, studentsCount }
   }
 
   async updateStatus(id: string, status: string) {
@@ -128,7 +157,7 @@ export class GroupsService {
       throw new NotFoundException('Group not found')
     }
 
-    return this.prisma.group.update({
+    const updated = await this.prisma.group.update({
       where: { id },
       data: { status },
       include: {
@@ -136,6 +165,12 @@ export class GroupsService {
         teacher: { select: { id: true, fullName: true, email: true } },
       },
     })
+
+    const studentsCount = await this.prisma.enrollment.count({
+      where: { groupId: id, status: 'ACTIVE' },
+    })
+
+    return { ...updated, studentsCount }
   }
 
   private async ensureTeacher(teacherId: string) {

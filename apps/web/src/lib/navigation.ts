@@ -2,6 +2,7 @@ import {
   Calendar,
   CreditCard,
   LayoutDashboard,
+  ImportantBookIcon,
   Users,
 } from "@hugeicons/core-free-icons"
 
@@ -20,5 +21,6 @@ export const navItems: NavItem[] = [
   { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { title: "People", href: "/people", icon: Users },
   { title: "Classes", href: "/classes", icon: Calendar },
+  { title: "Courses", href: "/courses", icon: ImportantBookIcon },
   { title: "Billing", href: "/billing", icon: CreditCard },
 ]

@@ -40,7 +40,7 @@ export function CourseFormDialog({ mode, course, trigger, onSuccess }: Props) {
   const updateMutation = useUpdateCourse(course?.id ?? "")
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schemaByMode[mode]),
+    resolver: zodResolver(schemaByMode[mode] as any),
     defaultValues: {
       title: course?.title ?? "",
       monthlyPrice: course?.monthlyPrice ?? 0,

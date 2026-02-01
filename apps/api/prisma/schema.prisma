@@ -32,6 +32,8 @@ model Student {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  enrollments Enrollment[]
 }
 
 model Course {
@@ -62,6 +64,26 @@ model Group {
 
   @@index([courseId])
   @@index([teacherId])
+  @@index([status])
+
+  enrollments Enrollment[]
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  studentId String
+  groupId   String
+  startDate DateTime
+  endDate   DateTime?
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id])
+  group   Group   @relation(fields: [groupId], references: [id])
+
+  @@index([studentId])
+  @@index([groupId])
   @@index([status])
 }
 

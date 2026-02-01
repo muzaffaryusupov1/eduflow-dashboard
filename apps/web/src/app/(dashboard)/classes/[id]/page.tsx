@@ -6,11 +6,15 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useGroup } from "@/features/groups/queries"
+import { useGroupEnrollments } from "@/features/enrollments/queries"
+import { AddStudentToGroupDialog } from "@/features/enrollments/components/add-student-to-group-dialog"
+import { GroupEnrollmentsTable } from "@/features/enrollments/components/group-enrollments-table"
 
 export default function GroupDetailPage() {
   const params = useParams()
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id
   const { data, isLoading, isError } = useGroup(id ?? "")
+  const enrollmentsQuery = useGroupEnrollments(id ?? "", { status: "ACTIVE", page: 1, pageSize: 20 })
 
   if (isLoading) {
     return (
@@ -76,7 +80,19 @@ export default function GroupDetailPage() {
               <TabsTrigger value="payments">Payments</TabsTrigger>
             </TabsList>
             <TabsContent value="students">
-              <div className="text-sm text-muted-foreground">Students list coming soon.</div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    Manage student enrollments for this group.
+                  </div>
+                  <AddStudentToGroupDialog groupId={data.id} />
+                </div>
+                <GroupEnrollmentsTable
+                  items={enrollmentsQuery.data?.items ?? []}
+                  isLoading={enrollmentsQuery.isLoading}
+                  isError={enrollmentsQuery.isError}
+                />
+              </div>
             </TabsContent>
             <TabsContent value="attendance">
               <div className="text-sm text-muted-foreground">Attendance tracking coming soon.</div>

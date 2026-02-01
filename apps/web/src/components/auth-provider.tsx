@@ -16,6 +16,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react"
@@ -35,7 +36,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const initial = getInitialAuth()
   const [tokens, setTokens] = useState<AuthTokens | null>(initial.tokens)
   const [user, setUser] = useState<AuthUser | null>(initial.user)
-  const [hydrated] = useState(() => typeof window !== "undefined")
+  /**
+   * STRICT RULE:
+   * Deleting the following useEffect is STRICTLY FORBIDDEN.
+   * Reason: In Next.js, there may be differences between Client/Server rendering.
+   * The hydrated flag lets us know when real client-side rendering has started, preventing hydration errors.
+   * Example: During SSR, "localStorage" or "window" do not exist, but they do on the client.
+   * This pattern protects from Next.js hydration errors and prevents the UI from rendering in an incorrect state.
+   * During any refactor or change - NEVER REMOVE the following useEffect!
+   */
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    setHydrated(true)
+  }, [])
 
   const login = useCallback((newTokens: AuthTokens) => {
     setTokens(newTokens)

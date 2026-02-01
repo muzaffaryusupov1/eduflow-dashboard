@@ -81,7 +81,7 @@ export function GroupFormDialog({ mode, group, trigger, onSuccess }: Props) {
         endDate: values.endDate || undefined,
         status: values.status,
       })
-      toast.error("Group updated")
+      toast.success("Group updated")
     }
     setOpen(false)
     onSuccess?.()
