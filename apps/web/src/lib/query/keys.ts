@@ -30,4 +30,14 @@ export const queryKeys = {
     student: (studentId: string) =>
       ["enrollments", "student", studentId] as const,
   },
+  attendance: {
+    root: ["attendance"] as const,
+    myGroups: (date: string) => ["attendance", "my-groups", date] as const,
+    session: (groupId: string, date: string) =>
+      ["attendance", "session", groupId, date] as const,
+    history: (filters?: Record<string, unknown>) =>
+      ["attendance", "history", filters ?? {}] as const,
+    sessionDetail: (id: string) =>
+      ["attendance", "session-detail", id] as const,
+  },
 }

@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form"
 import { toast } from 'sonner'
 import { z } from "zod"
 import { useCreateCourse, useUpdateCourse } from "../queries"
-import { courseCreateSchema, courseUpdateSchema } from "../schema"
+import { courseCreateSchema } from "../schema"
 import type { Course, CourseCreateInput } from "../types"
 
 type Mode = "create" | "edit"
@@ -27,11 +27,11 @@ type Props = {
   onSuccess?: () => void
 }
 
-type FormValues = z.infer<typeof courseUpdateSchema>
+type FormValues = z.infer<typeof courseCreateSchema>
 
-const schemaByMode: Record<Mode, z.ZodType<FormValues>> = {
+const schemaByMode: Record<Mode, typeof courseCreateSchema> = {
   create: courseCreateSchema,
-  edit: courseUpdateSchema,
+  edit: courseCreateSchema,
 }
 
 export function CourseFormDialog({ mode, course, trigger, onSuccess }: Props) {
@@ -40,7 +40,7 @@ export function CourseFormDialog({ mode, course, trigger, onSuccess }: Props) {
   const updateMutation = useUpdateCourse(course?.id ?? "")
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schemaByMode[mode] as any),
+    resolver: zodResolver(schemaByMode[mode]),
     defaultValues: {
       title: course?.title ?? "",
       monthlyPrice: course?.monthlyPrice ?? 0,
