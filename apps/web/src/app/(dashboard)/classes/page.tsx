@@ -10,6 +10,7 @@ import { GroupsTable } from "@/features/groups/components/groups-table"
 import { useGroups } from "@/features/groups/queries"
 import { useCourses } from "@/features/courses/queries"
 import { useTeachersOptions } from "@/features/staff/queries"
+import { Select, SelectContent } from '@/components/ui/select'
 
 export default function ClassesPage() {
   const router = useRouter()
@@ -83,7 +84,7 @@ export default function ClassesPage() {
                 </option>
               ))}
             </select>
-            <select
+            {/* <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -92,8 +93,14 @@ export default function ClassesPage() {
               <option value="ACTIVE">Active</option>
               <option value="PAUSED">Paused</option>
               <option value="FINISHED">Finished</option>
-            </select>
-          </div>
+            </select> */}
+            {/* <Select>
+              <SelectTrigger></SelectTrigger>
+              <SelectContent>
+                <SelectGroup
+              </SelectContent>
+            </Select>
+          </div> */}
 
           <GroupsTable
             groups={groups}
