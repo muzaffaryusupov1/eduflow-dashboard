@@ -9,10 +9,11 @@ import {
 } from "./api"
 import type { GroupCreateInput, GroupUpdateInput, GroupsFilters } from "./types"
 
-export function useGroups(filters: GroupsFilters = {}) {
+export function useGroups(filters: GroupsFilters = {}, enabled = true) {
   return useQuery({
     queryKey: queryKeys.groups.list(filters),
     queryFn: () => fetchGroups(filters),
+    enabled,
   })
 }
 

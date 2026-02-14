@@ -10,10 +10,11 @@ import {
 } from "./api"
 import type { CreateStaffInput, StaffFilters, UpdateStaffInput } from "./types"
 
-export function useStaffList(filters: StaffFilters = {}) {
+export function useStaffList(filters: StaffFilters = {}, enabled = true) {
   return useQuery({
     queryKey: queryKeys.staff.list(filters),
     queryFn: () => fetchStaff(filters),
+    enabled,
   })
 }
 
@@ -68,8 +69,8 @@ export function useResetStaffPassword() {
   })
 }
 
-export function useTeachersOptions() {
-  const { data, isLoading } = useStaffList({ page: 1, pageSize: 100 })
+export function useTeachersOptions(enabled = true) {
+  const { data, isLoading } = useStaffList({ page: 1, pageSize: 100 }, enabled)
   return {
     isLoading,
     options:

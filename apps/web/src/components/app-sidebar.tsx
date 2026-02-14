@@ -19,9 +19,13 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import Link from 'next/link'
 import { usePathname } from "next/navigation"
 import { NavUser } from './app-shell/nav-user'
+import { useAuth } from "./auth-provider"
 
 export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
+  const { user } = useAuth()
+  const role = user?.role
+  const visibleItems = navItems.filter((item) => !item.roles || (role ? item.roles.includes(role) : false))
 
   return (
     <Sidebar collapsible='offExamples' {...props}>
@@ -36,7 +40,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => {
+              {visibleItems.map((item) => {
                 const active = pathname === item.href
                 return (
                   <SidebarMenuItem key={item.title}>

@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form"
 import { toast } from 'sonner'
 import { z } from "zod"
 import { useCreateGroup, useUpdateGroup } from "../queries"
-import { groupCreateSchema, groupUpdateSchema } from "../schema"
+import { groupCreateSchema } from "../schema"
 import type { Group, GroupCreateInput } from "../types"
 
 type Mode = "create" | "edit"
@@ -29,11 +29,11 @@ type Props = {
   onSuccess?: () => void
 }
 
-type FormValues = z.infer<typeof groupUpdateSchema>
+type FormValues = z.infer<typeof groupCreateSchema>
 
-const schemaByMode: Record<Mode, z.ZodType<FormValues>> = {
+const schemaByMode: Record<Mode, typeof groupCreateSchema> = {
   create: groupCreateSchema,
-  edit: groupUpdateSchema,
+  edit: groupCreateSchema,
 }
 
 export function GroupFormDialog({ mode, group, trigger, onSuccess }: Props) {
@@ -44,7 +44,7 @@ export function GroupFormDialog({ mode, group, trigger, onSuccess }: Props) {
   const teachers = useTeachersOptions()
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schemaByMode[mode] as any),
+    resolver: zodResolver(schemaByMode[mode]),
     defaultValues: {
       title: group?.title ?? "",
       courseId: group?.courseId ?? "",

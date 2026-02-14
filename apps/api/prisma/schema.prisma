@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "./generated/client"
 }
 
 datasource db {
@@ -20,6 +21,7 @@ model User {
   updatedAt        DateTime @updatedAt
 
   groups Group[] @relation("TeacherGroups")
+  attendanceSessions AttendanceSession[] @relation("AttendanceTakenBy")
 }
 
 
@@ -34,6 +36,7 @@ model Student {
   updatedAt DateTime @updatedAt
 
   enrollments Enrollment[]
+  attendanceRecords AttendanceRecord[]
 }
 
 model Course {
@@ -67,6 +70,43 @@ model Group {
   @@index([status])
 
   enrollments Enrollment[]
+  attendanceSessions AttendanceSession[]
+}
+
+model AttendanceSession {
+  id            String   @id @default(cuid())
+  groupId       String
+  date          String
+  takenByUserId String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  group   Group @relation(fields: [groupId], references: [id])
+  takenBy User  @relation("AttendanceTakenBy", fields: [takenByUserId], references: [id])
+  records AttendanceRecord[]
+
+  @@unique([groupId, date])
+  @@index([date])
+  @@index([groupId])
+  @@index([takenByUserId])
+}
+
+model AttendanceRecord {
+  id        String   @id @default(cuid())
+  sessionId String
+  studentId String
+  status    String
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session AttendanceSession @relation(fields: [sessionId], references: [id])
+  student Student           @relation(fields: [studentId], references: [id])
+
+  @@unique([sessionId, studentId])
+  @@index([sessionId])
+  @@index([studentId])
+  @@index([status])
 }
 
 model Enrollment {
