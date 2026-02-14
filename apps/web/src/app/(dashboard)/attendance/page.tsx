@@ -1,6 +1,5 @@
 "use client"
 
-import { useMemo, useState } from "react"
 import { useAuth } from "@/components/auth-provider"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,9 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AttendanceTakeForm } from "@/features/attendance/components/attendance-take-form"
 import { useAttendanceMyGroups } from "@/features/attendance/queries"
+import { useMemo, useState } from "react"
 
 function todayString() {
-  return new Date().toISOString().slice(0, 10)
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, "0")
+  const day = String(today.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
 }
 
 export default function AttendancePage() {
