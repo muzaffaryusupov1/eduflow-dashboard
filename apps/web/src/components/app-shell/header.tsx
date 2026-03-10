@@ -1,5 +1,5 @@
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { ThemeToggle } from './theme-toggle'
+import { ThemeToggleButton } from '../ui/skiper-ui/skiper26'
 import { UserMenu } from './user-menu'
 
 export function Header() {
@@ -12,7 +12,7 @@ export function Header() {
           className="mx-2 data-[orientation=vertical]:h-4"
         /> */}
         <div className="ml-auto flex items-center gap-2">
-          <ThemeToggle/>
+          <ThemeToggleButton blur variant='rectangle' start='bottom-up' />
           <UserMenu />
         </div>
       </div>
