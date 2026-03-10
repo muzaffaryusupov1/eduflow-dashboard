@@ -1,15 +1,16 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useCourses } from "@/features/courses/queries"
 import { GroupFormDialog } from "@/features/groups/components/group-form-dialog"
 import { GroupsTable } from "@/features/groups/components/groups-table"
 import { useGroups } from "@/features/groups/queries"
-import { useCourses } from "@/features/courses/queries"
 import { useTeachersOptions } from "@/features/staff/queries"
+import { useRouter } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
 
 export default function ClassesPage() {
   const router = useRouter()
@@ -30,9 +31,9 @@ export default function ClassesPage() {
     page,
     pageSize,
     q: debounced || undefined,
-    courseId: courseId || undefined,
-    teacherId: teacherId || undefined,
-    status: status ? (status as "ACTIVE" | "PAUSED" | "FINISHED") : undefined,
+    courseId: courseId === "all-courses" ? undefined : courseId || undefined,
+    teacherId: teacherId === "all-teachers" ? undefined : teacherId || undefined,
+    status: status === "all" ? undefined : (status as "ACTIVE" | "PAUSED" | "FINISHED"),
   })
 
   const coursesQuery = useCourses({ page: 1, limit: 100 })
@@ -59,40 +60,52 @@ export default function ClassesPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              value={courseId}
-              onChange={(e) => setCourseId(e.target.value)}
-            >
-              <option value="">All courses</option>
-              {coursesQuery.data?.data.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.title}
-                </option>
-              ))}
-            </select>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              value={teacherId}
-              onChange={(e) => setTeacherId(e.target.value)}
-            >
-              <option value="">All teachers</option>
-              {teachers.options.map((teacher) => (
-                <option key={teacher.value} value={teacher.value}>
-                  {teacher.label}
-                </option>
-              ))}
-            </select>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="">All statuses</option>
-              <option value="ACTIVE">Active</option>
-              <option value="PAUSED">Paused</option>
-              <option value="FINISHED">Finished</option>
-            </select>
+            <Select value={courseId} onValueChange={setCourseId}>
+              <SelectTrigger className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'>
+                <SelectValue placeholder="All courses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Courses</SelectLabel>
+                  <SelectItem value="all-courses">All courses</SelectItem>
+                  {coursesQuery.data?.data.map((course) => (
+                    <SelectItem key={course.id} value={course.id}>
+                      {course.title}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Select value={teacherId} onValueChange={setTeacherId}>
+              <SelectTrigger className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'>
+                <SelectValue placeholder="All teachers" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Teachers</SelectLabel>
+                  <SelectItem value="all-teachers">All teachers</SelectItem>
+                  {teachers.options.map((teacher) => (
+                    <SelectItem key={teacher.value} value={teacher.value}>
+                      {teacher.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Select value={status} onValueChange={setStatus}>
+              <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+               <SelectValue placeholder="All statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Statuses</SelectLabel>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="PAUSED">Paused</SelectItem>
+                  <SelectItem value="FINISHED">Finished</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
 
           <GroupsTable
