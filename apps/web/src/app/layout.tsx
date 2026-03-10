@@ -1,18 +1,18 @@
-import type { Metadata } from "next"
-import { Nunito_Sans, Inter } from "next/font/google"
-import "./globals.css"
-import { Providers } from "./providers"
+import type { Metadata } from 'next';
+import { Inter, Nunito_Sans } from 'next/font/google';
+import './globals.css';
+import { Providers } from './providers';
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const nunitoSans = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ["latin"],
+  variable: '--font-nunito-sans',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "EduFlow",
-  description: "EduFlow education center management",
+  title: 'EduFlow',
+  description: 'EduFlow education center management',
 };
 
 export default function RootLayout({

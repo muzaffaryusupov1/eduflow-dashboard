@@ -1,17 +1,16 @@
 'use client';
 
-import { useAuth } from '@/components/auth-provider'
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { apiLogin } from '@/lib/api-client'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import * as z from 'zod'
+import { useAuth } from '@/components/auth-provider';
+import { apiLogin } from '@/lib/api-client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import * as z from 'zod';
+import SignInForm from './components/SignInForm';
 
 const formScheme = z.object({
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
@@ -44,12 +43,12 @@ export default function LoginPage() {
         closeButton: true,
         description: error?.message,
       });
-    }
+    },
   });
 
   const onFormSubmit = (data: FormScheme) => {
     mutation.mutate({ email: data.email, password: data.password });
-  }
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -58,81 +57,62 @@ export default function LoginPage() {
   }, [isAuthenticated, router]);
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <div className="mx-auto flex min-h-screen max-w-5xl items-center gap-10 px-6">
-        <div className="flex-1 space-y-6">
-          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">
-            EduFlow
-          </p>
-          <h1 className="text-4xl font-semibold tracking-tight">
-            Run your education center with calm precision.
-          </h1>
-          <p className="text-base text-muted-foreground">
-            Sign in to manage classes, teachers, and billing in one unified
-            workspace.
-          </p>
-        </div>
-        <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-sm">
-          <div className="space-y-2">
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Sign in
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Use your owner or admin credentials.
-            </p>
+    <main className="flex min-h-screen bg-background">
+      {/* Left Column - Sign In Form */}
+      <div className="flex-1 flex flex-col justify-center px-6 md:px-12 lg:px-16 py-12">
+        <div className="max-w-md w-full mx-auto">
+          {/* Logo */}
+          <div className="mb-12">
+            <div className="inline-flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-sm">E</span>
+              </div>
+              <span className="text-2xl font-bold text-foreground">EduFlow</span>
+            </div>
           </div>
-          <Form {...form}>
-          <form
-            className="mt-6 space-y-4"
-            onSubmit={form.handleSubmit(onFormSubmit)}
-          >
-            <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-            />
-            <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-            />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={mutation.isPending}
-            >
-              {mutation.isPending ? 'Signing in...' : 'Sign in'}
-            </Button>
-          </form>
-          </Form>
-
+          {/* Sign In Form */}
+          <SignInForm form={form} mutation={mutation} onFormSubmit={onFormSubmit} />
         </div>
       </div>
-    </div>
+
+      {/* Right Column - Branding and Image */}
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/30 relative overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/signin-bg-2.png"
+            alt="Education dashboard"
+            fill
+            className="object-cover opacity-80"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+        </div>
+
+        {/* Content Overlay */}
+        <div className="relative flex flex-col justify-between p-12 lg:p-16">
+          <div></div>
+          <div className="max-w-xl">
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+              Run your education center with calm precision.
+            </h2>
+            <p className="text-lg text-white/90 leading-relaxed">
+              Sign in to manage classes, teachers, and billing in one unified workspace.
+            </p>
+          </div>
+
+          {/* Bottom Decoration */}
+          <div className="flex gap-2">
+            <div className="w-2 h-2 rounded-full bg-white/60"></div>
+            <div className="w-2 h-2 rounded-full bg-white/40"></div>
+            <div className="w-2 h-2 rounded-full bg-white/20"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Right Side Content */}
+      <div className="lg:hidden fixed inset-0 -z-10 bg-gradient-to-br from-primary/5 via-transparent to-accent/5"></div>
+    </main>
   );
 }
