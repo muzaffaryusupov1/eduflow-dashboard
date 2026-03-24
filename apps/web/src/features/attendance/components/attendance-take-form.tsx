@@ -42,7 +42,7 @@ export function AttendanceTakeForm({ groupId, date }: AttendanceTakeFormProps) {
     if (!sessionQuery.data) return
     const next: Record<string, AttendanceStatus> = {}
     for (const student of sessionQuery.data.students) {
-      const existing = sessionQuery.data.session?.records.find(
+      const existing = sessionQuery.data.session?.records?.find(
         (record) => record.studentId === student.id
       )
       next[student.id] = (existing?.status as AttendanceStatus) ?? "PRESENT"

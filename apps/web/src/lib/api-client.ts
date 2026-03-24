@@ -9,6 +9,16 @@ type LoginInput = {
 
 type LoginResponse = AuthTokens;
 
+export async function apiLogout(accessToken: string): Promise<void> {
+  await fetch(`${API_URL}/auth/logout`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
 export async function apiLogin(input: LoginInput): Promise<LoginResponse> {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
