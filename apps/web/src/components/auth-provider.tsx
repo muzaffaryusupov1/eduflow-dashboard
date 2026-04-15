@@ -5,6 +5,7 @@ import {
   AuthUser,
   decodeJwt,
 } from "@/lib/auth"
+import { apiLogout } from "@/lib/api-client"
 import {
   clearTokens,
   getAccessToken,
@@ -59,6 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const logout = useCallback(() => {
+    const token = getAccessToken()
+    if (token) {
+      apiLogout(token).catch(() => {})
+    }
     setTokens(null)
     setUser(null)
     clearTokens()
