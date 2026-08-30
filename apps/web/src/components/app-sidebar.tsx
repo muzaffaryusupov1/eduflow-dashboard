@@ -33,7 +33,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
 
   return (
-    <Sidebar collapsible="offExamples" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <Link href={'/'}>
         <SidebarHeader
           className={cn('space-y-1 p-5 flex flex-row items-center gap-2', isCollapsed && 'p-2')}
@@ -49,7 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-2">
               {visibleItems.map((item) => {
                 const active = pathname === item.href;
                 return (
@@ -58,12 +58,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       asChild
                       isActive={active}
                       className={cn(
-                        'gap-3',
-                        active && 'bg-sidebar-accent text-sidebar-accent-foreground',
+                        'gap-3 relative h-10 rounded-md',
+                        active &&
+                        'bg-transparent hover:bg-transparent data-[active=true]:bg-transparent text-foreground before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-[2px] before:rounded-full before:bg-linear-to-b before:from-[#2563eb] before:to-[#06b6d4]',
+                        !active && 'text-muted-foreground',
                       )}
                     >
                       <Link href={item.href} className="flex items-center gap-2">
-                        <HugeiconsIcon icon={item.icon} size={18} />
+                        <HugeiconsIcon
+                          icon={item.icon}
+                          size={18}
+                          className={cn(active ? 'text-[#4cd7f6]' : 'text-[#4cd7f6]/60')}
+                        />
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>

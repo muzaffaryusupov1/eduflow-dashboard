@@ -24,6 +24,8 @@ type Props = {
   mode: Mode
   staff?: StaffUser
   trigger?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   onSuccess?: () => void
 }
 
@@ -34,8 +36,21 @@ const schemaByMode: Record<Mode, z.ZodType<FormValues>> = {
   edit: staffUpdateSchema,
 }
 
-export function StaffFormDialog({ mode, staff, trigger, onSuccess }: Props) {
-  const [open, setOpen] = useState(false)
+export function StaffFormDialog({
+  mode,
+  staff,
+  trigger,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  onSuccess,
+}: Props) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = (next: boolean) => {
+    if (isControlled) controlledOnOpenChange?.(next)
+    else setInternalOpen(next)
+  }
   const createMutation = useCreateStaff()
   const updateMutation = useUpdateStaff(staff?.id ?? "")
 
@@ -81,13 +96,15 @@ export function StaffFormDialog({ mode, staff, trigger, onSuccess }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(val) => !isSubmitting && setOpen(val)}>
-      <DialogTrigger asChild>
-        {trigger ?? (
+      {trigger !== undefined ? (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      ) : isControlled ? null : (
+        <DialogTrigger asChild>
           <Button variant="secondary" size="sm">
             {mode === "create" ? "New teacher" : "Edit"}
           </Button>
-        )}
-      </DialogTrigger>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{mode === "create" ? "New teacher" : "Edit teacher"}</DialogTitle>

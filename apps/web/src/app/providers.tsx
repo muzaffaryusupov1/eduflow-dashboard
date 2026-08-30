@@ -7,7 +7,7 @@ import { QueryProvider } from "@/lib/query/providers"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <QueryProvider>
         <AuthProvider>{children}</AuthProvider>
       </QueryProvider>

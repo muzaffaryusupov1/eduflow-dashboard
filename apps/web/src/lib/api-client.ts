@@ -35,3 +35,29 @@ export async function apiLogin(input: LoginInput): Promise<LoginResponse> {
 
   return response.json();
 }
+
+export async function apiForgotPassword(email: string): Promise<void> {
+  const response = await fetch(`${API_URL}/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || 'Unable to request password reset');
+  }
+}
+
+export async function apiResetPassword(token: string, newPassword: string): Promise<void> {
+  const response = await fetch(`${API_URL}/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword }),
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || 'Unable to reset password');
+  }
+}

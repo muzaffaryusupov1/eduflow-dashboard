@@ -40,4 +40,10 @@ export const queryKeys = {
     sessionDetail: (id: string) =>
       ["attendance", "session-detail", id] as const,
   },
+  dashboard: {
+    root: ["dashboard"] as const,
+    stats: () => ["dashboard", "stats"] as const,
+    recentAttendance: () => ["dashboard", "recent-attendance"] as const,
+    activeGroups: () => ["dashboard", "active-groups"] as const,
+  },
 }

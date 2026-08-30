@@ -10,6 +10,7 @@ import { StaffModule } from './staff/staff.module'
 import { GroupsModule } from './groups/groups.module'
 import { EnrollmentsModule } from './enrollments/enrollments.module'
 import { AttendanceModule } from './attendance/attendance.module'
+import { DashboardModule } from './dashboard/dashboard.module'
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
 
 @Module({
@@ -22,6 +23,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
     GroupsModule,
     EnrollmentsModule,
     AttendanceModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [

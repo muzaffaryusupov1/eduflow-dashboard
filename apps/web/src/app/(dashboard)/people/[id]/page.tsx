@@ -25,7 +25,7 @@ export default function StudentDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Tabs defaultValue="groups">
         <TabsList>
           <TabsTrigger value="groups">Groups</TabsTrigger>
@@ -33,7 +33,7 @@ export default function StudentDetailPage() {
         <TabsContent value="groups">
           <Card>
             <CardHeader>
-              <h3 className="text-base font-semibold">Group history</h3>
+              <h3 className="font-display text-base font-semibold">Group history</h3>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               {(data ?? []).length === 0 && (

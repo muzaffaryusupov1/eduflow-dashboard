@@ -1,13 +1,17 @@
+import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-import { Inter, Nunito_Sans } from 'next/font/google';
+import { Geist, Manrope } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
-const nunitoSans = Nunito_Sans({
-  variable: '--font-nunito-sans',
+const geistHeading = Geist({ subsets: ['latin'], variable: '--font-heading' });
+
+const manrope = Manrope({
+  variable: '--font-display',
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
@@ -21,8 +25,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body className={`${nunitoSans.variable} antialiased`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn(manrope.variable, geistHeading.variable, "font-sans", geist.variable)}
+    >
+      <body className="antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

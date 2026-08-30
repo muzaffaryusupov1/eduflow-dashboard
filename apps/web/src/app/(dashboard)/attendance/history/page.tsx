@@ -57,10 +57,10 @@ export default function AttendanceHistoryPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Card>
         <CardHeader>
-          <h2 className="text-xl font-semibold">Attendance history</h2>
+          <h2 className="font-display text-xl font-semibold">Attendance history</h2>
           <p className="text-sm text-muted-foreground">
             Review attendance sessions across groups.
           </p>

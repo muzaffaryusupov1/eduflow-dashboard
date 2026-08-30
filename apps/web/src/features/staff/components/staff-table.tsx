@@ -1,8 +1,20 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
+import {
+  KeyRound,
+  MoreHorizontal,
+  Pencil,
+  UserCheck,
+  UserX,
+} from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
@@ -19,167 +31,157 @@ import { useUpdateStaffStatus } from "../queries"
 
 type Props = {
   staff: StaffUser[]
-  page: number
-  pageSize: number
-  total: number
   isLoading: boolean
   isError: boolean
-  onPageChange: (page: number) => void
-  onRefresh: () => void
+  emptyMessage?: string
 }
 
-export function StaffTable({
-  staff,
-  page,
-  pageSize,
-  total,
-  isLoading,
-  isError,
-  onPageChange,
-  onRefresh,
-}: Props) {
+export function StaffTable({ staff, isLoading, isError, emptyMessage }: Props) {
   const updateStatus = useUpdateStaffStatus()
   const rows = useMemo(() => staff ?? [], [staff])
-  const totalPages = Math.max(1, Math.ceil(total / pageSize))
-  const showingFrom = (page - 1) * pageSize + (rows.length ? 1 : 0)
-  const showingTo = (page - 1) * pageSize + rows.length
+
+  const [editStaff, setEditStaff] = useState<StaffUser | null>(null)
+  const [resetStaff, setResetStaff] = useState<StaffUser | null>(null)
+
+  if (isError) {
+    return (
+      <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-sm text-destructive">
+        Failed to load staff list.
+      </div>
+    )
+  }
 
   return (
-    <Card className="p-0">
-      <CardHeader className="px-4 py-3">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Page {page} of {totalPages} · {total} total
-          </p>
-          <Button variant="ghost" size="sm" onClick={onRefresh}>
-            Refresh
-          </Button>
-        </div>
-      </CardHeader>
-      <Separator />
-      <CardContent className="p-0">
-        {isError ? (
-          <div className="p-6 text-sm text-destructive">
-            Failed to load staff list.
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+    <>
+      <div className="overflow-hidden rounded-lg border bg-card">
+      <Table>
+        <TableHeader className="bg-muted/40">
+          <TableRow className="hover:bg-muted/40">
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">Name</TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">Email</TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">Role</TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">Created</TableHead>
+            <TableHead className="h-11 px-4 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading &&
+            [1, 2, 3].map((row) => (
+              <TableRow key={row}>
+                <TableCell className="px-4 py-3"><Skeleton className="h-4 w-32" /></TableCell>
+                <TableCell className="px-4 py-3"><Skeleton className="h-4 w-40" /></TableCell>
+                <TableCell className="px-4 py-3"><Skeleton className="h-5 w-16" /></TableCell>
+                <TableCell className="px-4 py-3"><Skeleton className="h-5 w-16" /></TableCell>
+                <TableCell className="px-4 py-3"><Skeleton className="h-4 w-24" /></TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <Skeleton className="h-7 w-7 ml-auto rounded-md" />
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading && (
-                <>
-                  {[1, 2, 3].map((row) => (
-                    <TableRow key={row}>
-                      <TableCell>
-                        <Skeleton className="h-4 w-32" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-40" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-16" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24" />
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Skeleton className="h-4 w-24 ml-auto" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </>
-              )}
+            ))}
 
-              {!isLoading && rows.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
-                    No teachers yet.
-                  </TableCell>
-                </TableRow>
-              )}
+          {!isLoading && rows.length === 0 && (
+            <TableRow>
+              <TableCell
+                colSpan={6}
+                className="py-12 text-center text-sm text-muted-foreground"
+              >
+                {emptyMessage ?? "No teachers yet."}
+              </TableCell>
+            </TableRow>
+          )}
 
-              {!isLoading &&
-                rows.map((staffUser) => (
-                  <TableRow key={staffUser.id}>
-                    <TableCell className="font-medium">
-                      {staffUser.fullName ?? "—"}
-                    </TableCell>
-                    <TableCell>{staffUser.email}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">TEACHER</Badge>
-                    </TableCell>
-                    <TableCell>{new Date(staffUser.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <StaffFormDialog
-                        mode="edit"
-                        staff={staffUser}
-                        trigger={
-                          <Button variant="ghost" size="sm">
-                            Edit
-                          </Button>
-                        }
-                      />
-                      <ResetPasswordDialog
-                        staffId={staffUser.id}
-                        trigger={
-                          <Button variant="ghost" size="sm">
-                            Reset
-                          </Button>
-                        }
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
+          {!isLoading &&
+            rows.map((staffUser) => (
+              <TableRow key={staffUser.id}>
+                <TableCell className="px-4 py-3 font-medium">
+                  {staffUser.fullName ?? "—"}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-muted-foreground">{staffUser.email}</TableCell>
+                <TableCell className="px-4 py-3">
+                  <Badge variant="secondary">TEACHER</Badge>
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  {staffUser.isActive ? (
+                    <Badge variant="outline" className="text-emerald-600 dark:text-emerald-400">
+                      Active
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-muted-foreground">
+                      Disabled
+                    </Badge>
+                  )}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-muted-foreground">
+                  {new Date(staffUser.createdAt).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon-sm" aria-label="Open actions">
+                        <MoreHorizontal />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-44">
+                      <DropdownMenuItem
+                        onSelect={(e) => {
+                          e.preventDefault()
+                          setEditStaff(staffUser)
+                        }}
+                      >
+                        <Pencil />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onSelect={(e) => {
+                          e.preventDefault()
+                          setResetStaff(staffUser)
+                        }}
+                      >
+                        <KeyRound />
+                        Reset password
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        variant={staffUser.isActive ? "destructive" : "default"}
+                        onSelect={() =>
                           updateStatus.mutate({
                             id: staffUser.id,
                             isActive: !staffUser.isActive,
                           })
                         }
                       >
+                        {staffUser.isActive ? <UserX /> : <UserCheck />}
                         {staffUser.isActive ? "Disable" : "Enable"}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        )}
-        <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-muted-foreground">
-          <div>
-            Showing {showingFrom}-{showingTo} of {total}
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(Math.max(1, page - 1))}
-              disabled={page <= 1}
-            >
-              Previous
-            </Button>
-            <span className="text-xs text-muted-foreground">
-              Page {page} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-              disabled={page >= totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+      </div>
+
+      {editStaff && (
+        <StaffFormDialog
+          mode="edit"
+          staff={editStaff}
+          open={true}
+          onOpenChange={(next) => {
+            if (!next) setEditStaff(null)
+          }}
+        />
+      )}
+      {resetStaff && (
+        <ResetPasswordDialog
+          staffId={resetStaff.id}
+          open={true}
+          onOpenChange={(next) => {
+            if (!next) setResetStaff(null)
+          }}
+        />
+      )}
+    </>
   )
 }

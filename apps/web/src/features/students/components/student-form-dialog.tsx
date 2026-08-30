@@ -25,6 +25,8 @@ type Props = {
   mode: Mode
   student?: Student
   trigger?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   onSuccess?: () => void
 }
 
@@ -36,8 +38,21 @@ const schemaByMode: Record<Mode, z.ZodType<StudentFormValues>> = {
   edit: studentUpdateSchema,
 }
 
-export function StudentFormDialog({ mode, student, trigger, onSuccess }: Props) {
-  const [open, setOpen] = useState(false)
+export function StudentFormDialog({
+  mode,
+  student,
+  trigger,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  onSuccess,
+}: Props) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = (next: boolean) => {
+    if (isControlled) controlledOnOpenChange?.(next)
+    else setInternalOpen(next)
+  }
   const createMutation = useCreateStudent()
   const updateMutation = useUpdateStudent(student?.id ?? "")
 
@@ -72,13 +87,15 @@ export function StudentFormDialog({ mode, student, trigger, onSuccess }: Props) 
 
   return (
     <Dialog open={open} onOpenChange={(val) => !isSubmitting && setOpen(val)}>
-      <DialogTrigger asChild>
-        {trigger ?? (
+      {trigger !== undefined ? (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      ) : isControlled ? null : (
+        <DialogTrigger asChild>
           <Button variant="secondary" size="sm">
             {mode === "create" ? "Add student" : "Edit"}
           </Button>
-        )}
-      </DialogTrigger>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{mode === "create" ? "Add student" : "Edit student"}</DialogTitle>

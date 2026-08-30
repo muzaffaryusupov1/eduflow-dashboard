@@ -1,12 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common'
 import * as bcrypt from 'bcryptjs'
-import { randomUUID } from 'crypto'
+import { randomBytes, randomUUID } from 'crypto'
 import * as jwt from 'jsonwebtoken'
 import { PrismaService } from '../prisma/prisma.service'
 import { Role } from './roles.enum'
 
 const ACCESS_TOKEN_EXPIRES_IN = '15m';
 const REFRESH_TOKEN_EXPIRES_IN = '7d';
+const PASSWORD_RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 type TokenPair = {
   accessToken: string;
@@ -22,6 +23,8 @@ type JwtPayload = {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async login(email: string, password: string): Promise<TokenPair> {
@@ -137,6 +140,73 @@ export class AuthService {
       where: { id: userId },
       data: { passwordHash, refreshTokenHash: null },
     });
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    // Always return success to avoid leaking which emails exist.
+    if (!user || user.isActive === false) {
+      this.logger.warn(`Password reset requested for unknown or inactive email: ${email}`);
+      return;
+    }
+
+    const rawToken = randomBytes(32).toString('hex');
+    const tokenHash = await bcrypt.hash(rawToken, 10);
+    const expiresAt = new Date(Date.now() + PASSWORD_RESET_TOKEN_TTL_MS);
+
+    await this.prisma.passwordResetToken.create({
+      data: {
+        userId: user.id,
+        tokenHash,
+        expiresAt,
+      },
+    });
+
+    // MVP delivery: token printed to backend console; owner relays to user.
+    this.logger.log(
+      `\n  ===== PASSWORD RESET =====\n  Email:   ${user.email}\n  Token:   ${rawToken}\n  Expires: ${expiresAt.toISOString()}\n  ==========================`,
+    );
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const candidates = await this.prisma.passwordResetToken.findMany({
+      where: {
+        usedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    let match: (typeof candidates)[number] | null = null;
+    for (const candidate of candidates) {
+      if (await bcrypt.compare(token, candidate.tokenHash)) {
+        match = candidate;
+        break;
+      }
+    }
+
+    if (!match) {
+      throw new UnauthorizedException('Invalid or expired reset token');
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id: match.userId },
+        data: { passwordHash, refreshTokenHash: null },
+      }),
+      this.prisma.passwordResetToken.update({
+        where: { id: match.id },
+        data: { usedAt: new Date() },
+      }),
+      // Invalidate every other unused token for this user.
+      this.prisma.passwordResetToken.updateMany({
+        where: { userId: match.userId, usedAt: null, id: { not: match.id } },
+        data: { usedAt: new Date() },
+      }),
+    ]);
   }
 
   private issueTokens(payload: JwtPayload): TokenPair {

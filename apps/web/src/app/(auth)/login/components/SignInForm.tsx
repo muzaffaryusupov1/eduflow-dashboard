@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -65,9 +66,12 @@ const SignInForm: React.FC<Props> = ({ form, mutation, onFormSubmit }) => {
                 <input type="checkbox" className="w-4 h-4 rounded cursor-pointer" />
                 <span className="text-muted-foreground">Remember me</span>
               </label>
-              <a href="#" className="text-primary hover:text-accent font-medium transition-colors">
+              <Link
+                href="/forgot-password"
+                className="text-primary hover:text-accent font-medium transition-colors"
+              >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
             <Button

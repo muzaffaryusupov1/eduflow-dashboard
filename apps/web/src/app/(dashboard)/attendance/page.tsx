@@ -38,11 +38,11 @@ export default function AttendancePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Card>
         <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold">Take attendance</h2>
+            <h2 className="font-display text-xl font-semibold">Take attendance</h2>
             <p className="text-sm text-muted-foreground">
               Select a date and a group to mark attendance.
             </p>
@@ -67,7 +67,7 @@ export default function AttendancePage() {
             <div className="text-sm text-destructive">Failed to load your groups.</div>
           )}
           {!groupsQuery.isLoading && groups.length === 0 && (
-            <Card className="border-dashed">
+            <Card className="bg-muted">
               <CardContent className="py-6 text-sm text-muted-foreground">
                 No groups assigned to you yet.
               </CardContent>
@@ -81,7 +81,7 @@ export default function AttendancePage() {
                   `${group.course?.title ?? "Group"} • ${group.scheduleText}`
                 const active = selectedGroupId === group.id
                 return (
-                  <Card key={group.id} className={active ? "border-primary" : ""}>
+                  <Card key={group.id} className={active ? 'ring-2 ring-primary/50' : ''}>
                     <CardContent className="flex items-center justify-between gap-3 py-4">
                       <div>
                         <p className="font-medium">{title}</p>

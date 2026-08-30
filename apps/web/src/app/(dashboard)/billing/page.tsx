@@ -5,7 +5,7 @@ export default function BillingPage() {
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-xl font-semibold">Billing</h2>
+        <h2 className="font-display text-xl font-semibold">Billing</h2>
         <p className="text-sm text-muted-foreground">
           Track invoices and payments.
         </p>

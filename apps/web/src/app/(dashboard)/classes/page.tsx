@@ -42,11 +42,11 @@ export default function ClassesPage() {
   const groups = useMemo(() => groupsQuery.data?.items ?? [], [groupsQuery.data])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Card>
         <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold">Groups</h2>
+            <h2 className="font-display text-xl font-semibold">Groups</h2>
             <p className="text-sm text-muted-foreground">
               Manage classes, schedules, and teacher assignments.
             </p>
@@ -61,7 +61,7 @@ export default function ClassesPage() {
               onChange={(e) => setSearch(e.target.value)}
             />
             <Select value={courseId} onValueChange={setCourseId}>
-              <SelectTrigger className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'>
+              <SelectTrigger>
                 <SelectValue placeholder="All courses" />
               </SelectTrigger>
               <SelectContent>
@@ -77,7 +77,7 @@ export default function ClassesPage() {
               </SelectContent>
             </Select>
             <Select value={teacherId} onValueChange={setTeacherId}>
-              <SelectTrigger className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'>
+              <SelectTrigger>
                 <SelectValue placeholder="All teachers" />
               </SelectTrigger>
               <SelectContent>
@@ -93,7 +93,7 @@ export default function ClassesPage() {
               </SelectContent>
             </Select>
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <SelectTrigger>
                <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
